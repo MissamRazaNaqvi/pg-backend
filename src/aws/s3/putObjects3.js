@@ -5,10 +5,11 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const generatePresignedURL = async () => {
+const generatePresignedURL = async (originalname) => {
+  console.log("original name ",originalname)
   const command = new PutObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME,
-    Key: "pictures/vercel.png", // Path in the S3 bucket where you want to store the image
+    Key:`profilePictures/${Date.now()}_${originalname}`, // Path in the S3 bucket where you want to store the image
     ContentType: "image/*", // Content type; can be set based on frontend input
   });
 

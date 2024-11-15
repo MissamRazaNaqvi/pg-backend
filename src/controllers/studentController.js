@@ -1,4 +1,6 @@
+import { generatePresignedURL } from "../aws/s3/putObjects3.js";
 import Student from "../models/schema/studentSchema.js";
+import StudentSchema from "../models/schema/studentSchema.js";
 
 // Function to log initial message
 export const initial = async (req, res) => {
@@ -28,7 +30,66 @@ export const addStudent = async (req, res) => {
     res.status(400).json({ message: "Error adding student", error });
   }
 };
+export const studentRegistration= async(req,res)=>{
+  console.log(req.body.passportSizeImage, "Passport Image Data");
 
+  try {
+    // Destructure fields from request body
+    const {
+      firstName,
+      lastName,
+      roomNo,
+      courseName,
+      semester,
+      mobileNumber,
+      hometown,
+      sharingOption,
+    } = req.body;
+
+
+    // Validate file
+    const file = req.body.passportSizeImage;
+    console.log("file",file)
+    // if (!file || !file.name) {
+    //   return res.status(400).json({ error: "Passport image is required" });
+    // }
+
+    // Generate a pre-signed URL for the file
+    const fileUrl = await generatePresignedURL(file.name);
+    console.log("fileUrl",fileUrl)
+
+    if (!fileUrl) {
+      return res.status(500).json({ error: "Failed to generate S3 URL" });
+    }
+    console.log(fileUrl, "Generated File URL");
+
+    // Create student data
+    const newStudent = new StudentSchema({
+      firstName,
+      lastName,
+      roomNo,
+      courseName,
+      semester,
+      mobileNumber,
+      hometown,
+      sharingOption,
+      passportImageUrl: fileUrl, // Store the generated file URL
+    });
+
+    // Save student data to MongoDB
+    await newStudent.save();
+    console.log("Student data saved successfully:", newStudent);
+
+    // Send success response
+    res.status(200).json({
+      message: "Student registration successful",
+      data: newStudent,
+    });
+  } catch (error) {
+    console.error("Error in student registration:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
 // Function to add a sample student
 export const addSampleStudent = async () => {
   const newStudent = new Student({
