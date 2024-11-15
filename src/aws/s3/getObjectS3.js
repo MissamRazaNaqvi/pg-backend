@@ -1,7 +1,8 @@
-const { GetObjectCommand } = require("@aws-sdk/client-s3");
-const s3Client = require("./s3Config");
-const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const dotenv = require("dotenv");
+import { GetObjectCommand } from "@aws-sdk/client-s3";
+import s3Client from "./s3Config.js";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import dotenv from "dotenv";
+
 dotenv.config();
 
 async function getObjctURL(key) {
@@ -12,7 +13,6 @@ async function getObjctURL(key) {
 
   try {
     const url = await getSignedUrl(s3Client, command, { expiresIn: 300 }); // URL expires in 5 minutes
-    // console.log("getObject Presigned URL:", url);
     return url;
   } catch (error) {
     console.error("Error generating presigned URL:", error);
@@ -23,10 +23,10 @@ async function getObjctURL(key) {
 async function getImage() {
   try {
     const url = await getObjctURL("vercel.png");
-    // console.log("getObject Presigned URL:", url);
     return url;
   } catch (error) {
     console.error("Error getting image:", error);
   }
 }
-module.exports = { getObjctURL, getImage };
+
+export { getObjctURL, getImage };

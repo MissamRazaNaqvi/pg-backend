@@ -1,6 +1,7 @@
-// databaseSetup.js
-const mongoose = require("mongoose");
-require("dotenv").config();
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 async function connectMongoAtlas() {
   try {
@@ -28,5 +29,5 @@ async function connectMongoAtlas() {
   }
 }
 
-// Export the function and keep the connection open
-module.exports = connectMongoAtlas;
+// Export the function
+export default connectMongoAtlas;

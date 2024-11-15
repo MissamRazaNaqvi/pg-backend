@@ -1,10 +1,10 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const studentSchema = new mongoose.Schema(
   {
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
-    feesAmountAndReceiptNo: { type: String, default: "" },
+    fees: { type: Number, default: "4500" },
     timestamp: { type: String, default: "" },
     emailAddress: { type: String, required: true },
     roomNo: { type: String, required: true },
@@ -37,4 +37,4 @@ const studentSchema = new mongoose.Schema(
   { collection: "students" }
 );
 
-module.exports = mongoose.model("Student", studentSchema);
+export default mongoose.model("Student", studentSchema);

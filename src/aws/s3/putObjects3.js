@@ -1,7 +1,8 @@
-const { PutObjectCommand } = require("@aws-sdk/client-s3");
-const s3Client = require("./s3Config");
-const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const dotenv = require("dotenv");
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import s3Client from "./s3Config.js";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import dotenv from "dotenv";
+
 dotenv.config();
 
 const generatePresignedURL = async () => {
@@ -13,7 +14,6 @@ const generatePresignedURL = async () => {
 
   try {
     const url = await getSignedUrl(s3Client, command); // URL expires in 5 minutes
-    // console.log("PutObject Presigned URL:", url);
     return url;
   } catch (error) {
     console.error("Error generating presigned URL:", error);
@@ -21,4 +21,4 @@ const generatePresignedURL = async () => {
   }
 };
 
-module.exports = { generatePresignedURL };
+export { generatePresignedURL };

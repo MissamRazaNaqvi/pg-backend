@@ -1,13 +1,18 @@
-const express = require("express");
-const router = express.Router();
-const {
+import express from "express";
+import {
   fetchAllStudents,
   initial,
   addStudent,
-} = require("../controllers/studentController");
+  updateFeesForAllStudents,
+} from "../controllers/studentController.js";
+import { updateAllFields } from "../controllers/updateKeys.js";
+
+const router = express.Router();
 
 router.get("/", initial);
 router.get("/student", fetchAllStudents);
 router.post("/addNewStudent", addStudent);
+router.put("/updateFeesForAllStudents", updateFeesForAllStudents);
+router.get("/updateAllFields", updateAllFields);
 
-module.exports = router;
+export default router;
