@@ -7,6 +7,7 @@ import {
   studentRegistration,
 } from "../controllers/studentController.js";
 import { updateAllFields } from "../controllers/updateKeys.js";
+import { getStudentDetails } from "../controllers/StudentDetails.js";
 
 const router = express.Router();
 
@@ -16,5 +17,6 @@ router.post("/addNewStudent", addStudent);
 router.post("/studentRegistration", studentRegistration);
 router.put("/updateFeesForAllStudents", updateFeesForAllStudents);
 router.get("/updateAllFields", updateAllFields);
+router.get("/students/:id", getStudentDetails);
 
 export default router;
