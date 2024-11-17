@@ -1,6 +1,6 @@
 import { generatePresignedURL } from "../aws/s3/putObjects3.js";
 import Student from "../models/schema/studentSchema.js";
-import StudentSchema from "../models/schema/studentSchema.js";
+// import StudentSchema from "../models/schema/studentSchema.js";
 
 // Function to log initial message
 export const initial = async (req, res) => {
@@ -31,7 +31,7 @@ export const addStudent = async (req, res) => {
   }
 };
 export const studentRegistration= async(req,res)=>{
-  console.log(req.body.passportSizeImage, "Passport Image Data");
+  console.log(req.body, "Passport Image Data");
 
   try {
     // Destructure fields from request body
@@ -41,8 +41,8 @@ export const studentRegistration= async(req,res)=>{
       roomNo,
       courseName,
       semester,
-      mobileNumber,
-      hometown,
+      studentMobileNumber,
+      cityYourHometown,
       sharingOption,
     } = req.body;
 
@@ -61,17 +61,16 @@ export const studentRegistration= async(req,res)=>{
     if (!fileUrl) {
       return res.status(500).json({ error: "Failed to generate S3 URL" });
     }
-    console.log(fileUrl, "Generated File URL");
 
     // Create student data
-    const newStudent = new StudentSchema({
+    const newStudent = new Student({
       firstName,
       lastName,
       roomNo,
       courseName,
       semester,
-      mobileNumber,
-      hometown,
+      studentMobileNumber,
+      cityYourHometown,
       sharingOption,
       passportImageUrl: fileUrl, // Store the generated file URL
     });
