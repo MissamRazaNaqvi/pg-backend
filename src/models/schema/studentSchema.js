@@ -32,7 +32,7 @@ const studentSchema = new mongoose.Schema(
     joiningDate: { type: String, default: "" },
     lastCollege: { type: String, default: "" },
     aadharCard: { type: String, default: "" },
-    passportImageUrl: { type: String, required: true },
+    passportSizeImage: { type: String, required: true },
   },
   { collection: "students" }
 );

@@ -35,48 +35,51 @@ export const studentRegistration= async(req,res)=>{
 
   try {
     // Destructure fields from request body
-    const {
-      firstName,
-      lastName,
-      roomNo,
-      courseName,
-      semester,
-      studentMobileNumber,
-      cityYourHometown,
-      sharingOption,
-    } = req.body;
+    // const {
+    //   firstName,
+    //   lastName,
+    //   roomNo,
+    //   courseName,
+    //   semester,
+    //   studentMobileNumber,
+    //   cityYourHometown,
+    //   sharingOption,
+    // } = req.body;
 
 
     // Validate file
-    const file = req.body.passportSizeImage;
-    console.log("file",file)
+    // const file = req.body.passportSizeImage;
+    // console.log("file",file)
     // if (!file || !file.name) {
     //   return res.status(400).json({ error: "Passport image is required" });
     // }
 
     // Generate a pre-signed URL for the file
-    const fileUrl = await generatePresignedURL(file.name);
-    console.log("fileUrl",fileUrl)
+    // const fileUrl = await generatePresignedURL(file.name);
+    // console.log("fileUrl",fileUrl)
 
-    if (!fileUrl) {
-      return res.status(500).json({ error: "Failed to generate S3 URL" });
-    }
+    // if (!fileUrl) {
+    //   return res.status(500).json({ error: "Failed to generate S3 URL" });
+    // }
 
     // Create student data
-    const newStudent = new Student({
-      firstName,
-      lastName,
-      roomNo,
-      courseName,
-      semester,
-      studentMobileNumber,
-      cityYourHometown,
-      sharingOption,
-      passportImageUrl: fileUrl, // Store the generated file URL
-    });
+    // const newStudent = new Student({
+    //   firstName,
+    //   lastName,
+    //   roomNo,
+    //   courseName,
+    //   semester,
+    //   studentMobileNumber,
+    //   cityYourHometown,
+    //   sharingOption,
+    //   passportImageUrl, // Store the generated file URL
+    // });
 
-    // Save student data to MongoDB
+    const newStudent = new Student(req.body);
+
+    // Save the student data to MongoDB
     await newStudent.save();
+
     console.log("Student data saved successfully:", newStudent);
 
     // Send success response
