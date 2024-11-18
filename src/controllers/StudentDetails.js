@@ -7,7 +7,7 @@ export const getStudentDetails = async (req, res) => {
 
     // Retrieve the student by ID
     const student = await Student.findById(id);
-
+    // console.log(student,"student")
     if (!student) {
       return res.status(404).json({
         success: false,
@@ -16,8 +16,11 @@ export const getStudentDetails = async (req, res) => {
     }
 
     // Fetch the image URL from S3
-    const imageURL = await getImage(student.imageName);
-    console.log(imageURL, "imageURL");
+    const imageURL = await getImage(`profilePictures/${student.imageName}`);
+    // const imageURL = await getImage("vercel.png");
+
+    
+    // console.log(imageURL, "imageURL");
     // Construct the response data (use the fields you want to send back)
     const studentDetails = {
       firstName: student.firstName,
