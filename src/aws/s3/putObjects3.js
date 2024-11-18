@@ -6,10 +6,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const generatePresignedURL = async (originalname) => {
-  console.log("original name ",originalname)
+  // console.log("original name ",originalname)
   const command = new PutObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME,
-    Key:`profilePictures/${Date.now()}_${originalname}`, // Path in the S3 bucket where you want to store the image
+    Key: `profilePictures/${originalname}`, // Path in the S3 bucket where you want to store the image
     ContentType: "image/*", // Content type; can be set based on frontend input
   });
 

@@ -30,68 +30,61 @@ export const addStudent = async (req, res) => {
     res.status(400).json({ message: "Error adding student", error });
   }
 };
-export const studentRegistration= async(req,res)=>{
-  console.log(req.body, "Passport Image Data");
-
+export const studentRegistration = async (req, res) => {
   try {
     // Destructure fields from request body
-    // const {
-    //   firstName,
-    //   lastName,
-    //   roomNo,
-    //   courseName,
-    //   semester,
-    //   studentMobileNumber,
-    //   cityYourHometown,
-    //   sharingOption,
-    // } = req.body;
+    const {
+      firstName,
+      lastName,
+      roomNo,
+      courseName,
+      semester,
+      studentMobileNumber,
+      cityYourHometown,
+      sharingOption,
+      roomFees,
+      imageName,
+    } = req.body;
 
-
-    // Validate file
-    // const file = req.body.passportSizeImage;
-    // console.log("file",file)
-    // if (!file || !file.name) {
-    //   return res.status(400).json({ error: "Passport image is required" });
-    // }
+    if (!imageName) {
+      return res.status(400).json({ error: "Passport image is required" });
+    }
 
     // Generate a pre-signed URL for the file
-    // const fileUrl = await generatePresignedURL(file.name);
-    // console.log("fileUrl",fileUrl)
-
-    // if (!fileUrl) {
-    //   return res.status(500).json({ error: "Failed to generate S3 URL" });
-    // }
+    const fileUrl = await generatePresignedURL(imageName);
+    // console.log("fileUrl", fileUrl);
+    if (!fileUrl) {
+      return res.status(500).json({ error: "Failed to generate S3 URL" });
+    }
 
     // Create student data
-    // const newStudent = new Student({
-    //   firstName,
-    //   lastName,
-    //   roomNo,
-    //   courseName,
-    //   semester,
-    //   studentMobileNumber,
-    //   cityYourHometown,
-    //   sharingOption,
-    //   passportImageUrl, // Store the generated file URL
-    // });
-
-    const newStudent = new Student(req.body);
+    const newStudent = new Student({
+      firstName,
+      lastName,
+      roomNo,
+      courseName,
+      semester,
+      studentMobileNumber,
+      cityYourHometown,
+      sharingOption,
+      roomFees,
+      imageName,
+    });
 
     // Save the student data to MongoDB
     await newStudent.save();
+    console.log(newStudent, "Student data saved successfully:");
 
-    console.log("Student data saved successfully:", newStudent);
-
-    // Send success response
+    // Send success response including fileUrl
     res.status(200).json({
       message: "Student registration successful",
-      data: newStudent,
+      fileUrl, // Include the pre-signed URL in the response
     });
   } catch (error) {
     console.error("Error in student registration:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
-}
+};
 // Function to add a sample student
 export const addSampleStudent = async () => {
   const newStudent = new Student({

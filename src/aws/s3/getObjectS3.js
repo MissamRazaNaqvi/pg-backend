@@ -20,9 +20,9 @@ async function getObjctURL(key) {
   }
 }
 
-async function getImage() {
+async function getImage(key) {
   try {
-    const url = await getObjctURL("vercel.png");
+    const url = await getObjctURL(key);
     return url;
   } catch (error) {
     console.error("Error getting image:", error);
