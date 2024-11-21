@@ -5,6 +5,7 @@ import {
   addStudent,
   updateFeesForAllStudents,
   studentRegistration,
+  studentRegistrationByGoogleFormData,
 } from "../controllers/studentController.js";
 import { updateAllFields } from "../controllers/updateKeys.js";
 import { getStudentDetails } from "../controllers/StudentDetails.js";
@@ -13,6 +14,7 @@ import {
   getFeeStatusByMonth,
   updateFeeStatus,
 } from "../controllers/feesController.js";
+import { residentRegistrations } from "../controllers/residentRegistration.js";
 
 const router = express.Router();
 
@@ -23,7 +25,10 @@ router.post("/addNewStudent", addStudent);
 router.post("/studentRegistration", studentRegistration);
 router.put("/updateFeesForAllStudents", updateFeesForAllStudents);
 router.get("/updateAllFields", updateAllFields);
-router.get("/generateMonthlyFees", generateMonthlyFees);
+// router.get("/generateMonthlyFees", generateMonthlyFees);
+router.post("/google-form-data", studentRegistrationByGoogleFormData);
+
+router.post("/residentregistration", residentRegistrations);
 
 // Get fee status for students by month
 router.get("/fees", getFeeStatusByMonth);

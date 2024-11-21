@@ -138,3 +138,9 @@ export const updateFeesForAllStudents = async (req, res) => {
     res.send("Error updating fees:", error);
   }
 };
+
+export const studentRegistrationByGoogleFormData = (req, res) => {
+  console.log("Received Google Form data:", req.body);
+  // Process the form data here
+  res.status(200).send("Data received");
+};
