@@ -18,10 +18,11 @@ const residentSchema = new mongoose.Schema(
     district: { type: String, required: true },
     state: { type: String, required: true },
     zipcode: { type: String, required: true },
-    policeVerificationCertificate: String, // URL for the file
-    lastCollegeFeesReceipt: String, // URL for the file
-    passportSizeImage: String, // URL for the file
-    aadharCard: String, // URL for the file
+    isActive: { type: Boolean, default: true }, // Add this line
+    policeVerificationCertificateFileName: { type: String, default: "" }, // URL for the file
+    lastCollegeFeesReceiptFileName: { type: String, default: "" }, // URL for the file
+    passportSizeFileImage: { type: String, default: "" }, // URL for the file
+    aadharCardFileName: { type: String, default: "" }, // URL for the file
     extraCurricularActivities: String, //optional
     vehicleNumber: String, //optional
     lastCollege: String, //optional
