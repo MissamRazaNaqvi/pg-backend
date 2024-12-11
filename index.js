@@ -1,34 +1,62 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
-import connectMongoAtlas from "./src/config/databaseConnection.js";
-import route from "./src/routes/studentRoutes.js";
-import { setupCronJobs } from "./src/cron.js";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
+import compression from "compression";
 
-dotenv.config();
+import { connectMongoAtlas } from "./src/config/databaseConnection.js";
+import { setupCronJobs } from "./src/cron.js";
+import { initializeRoutes } from "./src/routes/index.js";
+import { loggerMiddleware } from "./src/middlewares/loggerMiddleware.js";
+import { errorHandler } from "./src/middlewares/errorHandler.js";
 
 const app = express();
 const port = process.env.PORT || 3001;
 
-// Middleware
-app.use(cors());
+// Initialize Middlewares
+app.use(helmet());
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per window
+  })
+);
+app.use(compression());
 app.use(
   cors({
-    origin: "http://localhost:3000", // Allow requests from this origin
-    methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed methods
-    allowedHeaders: ["Content-Type", "Authorization"], // Specify allowed headers
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(loggerMiddleware);
 
 // Connect to MongoDB
 connectMongoAtlas();
-app.use("/", route);
+
+// Initialize Routes
+initializeRoutes(app);
+
+// Health Check Route
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "OK",
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// Error Handling Middleware
+app.use(errorHandler);
 
 // Setup Cron Jobs
-setupCronJobs(); // Start the cron jobs this cron run every month for monthly fees record
+setupCronJobs();
 
-// Server start
+// Start the Server
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server running on port ${port}`);
 });
