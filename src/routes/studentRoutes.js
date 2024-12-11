@@ -15,6 +15,7 @@ import {
   updateFeeStatus,
 } from "../controllers/feesController.js";
 import { residentRegistrations } from "../controllers/residentRegistration.js";
+import { addRoom } from "../controllers/roomController.js";
 
 const router = express.Router();
 
@@ -27,6 +28,8 @@ router.put("/updateFeesForAllStudents", updateFeesForAllStudents);
 router.get("/updateAllFields", updateAllFields);
 // router.get("/generateMonthlyFees", generateMonthlyFees);
 router.post("/google-form-data", studentRegistrationByGoogleFormData);
+router.post("/addRoom", addRoom);
+
 
 router.post("/residentregistration", residentRegistrations);
 
