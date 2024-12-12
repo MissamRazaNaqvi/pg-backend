@@ -4,6 +4,8 @@ import { User } from "../models/schema/userSchema.js";
 
 // User Registration
 export const register = async (req, res) => {
+  const data = req.body;
+  console.log("Registering", data);
   try {
     const { name, email, password, role, contactNumber } = req.body;
 
@@ -13,7 +15,8 @@ export const register = async (req, res) => {
     }
 
     // Check if user already exists
-    let existingUser = await User.findOne({ email });
+    let existingUser = await User.findOne({ contactNumber });
+    console.log(existingUser, "existingUser");
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
@@ -21,13 +24,13 @@ export const register = async (req, res) => {
     // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-
+    console.log(hashedPassword, "hashed password");
     // Create new user
     const newUser = new User({
       name,
       email,
       password: hashedPassword,
-      role: role || "user", // Default role as "user"
+      role: role || "resident", // Default role as "user"
       contactNumber,
     });
 
@@ -61,6 +64,7 @@ export const register = async (req, res) => {
 
 // User Login
 export const login = async (req, res) => {
+  console.log(req.body);
   try {
     const { email, password } = req.body;
 
