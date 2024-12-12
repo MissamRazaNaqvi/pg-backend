@@ -7,7 +7,7 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import compression from "compression";
 
-import { connectMongoAtlas } from "./src/config/databaseConnection.js";
+import  connectMongoAtlas  from "./src/config/databaseConnection.js";
 import { setupCronJobs } from "./src/cron.js";
 import { initializeRoutes } from "./src/routes/index.js";
 import { loggerMiddleware } from "./src/middlewares/loggerMiddleware.js";
@@ -32,23 +32,23 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(loggerMiddleware);
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+// app.use(loggerMiddleware);
 
 // Connect to MongoDB
 connectMongoAtlas();
 
 // Initialize Routes
-initializeRoutes(app);
+// initializeRoutes(app);
 
 // Health Check Route
-app.get("/health", (req, res) => {
-  res.status(200).json({
-    status: "OK",
-    timestamp: new Date().toISOString(),
-  });
-});
+// app.get("/health", (req, res) => {
+//   res.status(200).json({
+//     status: "OK",
+//     timestamp: new Date().toISOString(),
+//   });
+// });
 
 // Error Handling Middleware
 app.use(errorHandler);
