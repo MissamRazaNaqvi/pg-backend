@@ -1,9 +1,9 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { User } from "../models/schema/userSchema";
+import { User } from "../models/schema/userSchema.js";
 
 // User Registration
-exports.register = async (req, res) => {
+export const register = async (req, res) => {
   try {
     const { name, email, password, role, contactNumber } = req.body;
 
@@ -60,7 +60,7 @@ exports.register = async (req, res) => {
 };
 
 // User Login
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -109,7 +109,7 @@ exports.login = async (req, res) => {
 };
 
 // Get User Profile
-exports.getProfile = async (req, res) => {
+export const getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.userId).select("-password");
     if (!user) {
@@ -122,7 +122,7 @@ exports.getProfile = async (req, res) => {
 };
 
 // Update User Profile
-exports.updateProfile = async (req, res) => {
+export const updateProfile = async (req, res) => {
   try {
     const { name, contactNumber, profilePicture } = req.body;
 
@@ -153,7 +153,7 @@ exports.updateProfile = async (req, res) => {
 };
 
 // Change Password
-exports.changePassword = async (req, res) => {
+export const changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
 
