@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["admin", "manager", "resident"], // Example roles
+      enum: ["admin","pg_owner" ,"manager", "resident"], // Example roles
       default: "resident",
     },
     contactNumber: {

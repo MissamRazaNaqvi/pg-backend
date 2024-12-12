@@ -32,15 +32,15 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 // app.use(loggerMiddleware);
 
 // Connect to MongoDB
 connectMongoAtlas();
 
 // Initialize Routes
-// initializeRoutes(app);
+initializeRoutes(app);
 
 // Health Check Route
 // app.get("/health", (req, res) => {
