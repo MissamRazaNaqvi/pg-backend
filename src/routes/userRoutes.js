@@ -1,20 +1,19 @@
 import express from "express";
 import {
-  registerUser,
-  loginUser,
-  getUserProfile,
-  updateUserProfile,
-} from "../controllers/userController.js";
-import { authMiddleware } from "../middlewares/authMiddleware.js";
+  register,
+  login,
+  getProfile,
+  updateProfile,
+  changePassword,
+} from "../controllers/userController.js"; // Import user controller methods
 
-const router = express.Router();
+const router = express.Router(); // Initialize router
 
-// Public Routes
-router.post("/register", registerUser); // User Registration
-router.post("/login", loginUser); // User Login
+// Define routes and link them to controller methods
+router.post("/register", register); // Register user
+router.post("/login", login); // Login user
+router.get("/profile", getProfile); // Get user profile
+router.put("/profile", updateProfile); // Update user profile
+router.put("/change-password", changePassword); // Change user password
 
-// Protected Routes (Requires Authentication)
-router.get("/profile", authMiddleware, getUserProfile); // Get User Profile
-router.put("/profile", authMiddleware, updateUserProfile); // Update User Profile
-
-export default router;
+export default router; // Export router to be used in the index.js

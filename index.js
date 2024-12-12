@@ -7,7 +7,7 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import compression from "compression";
 
-import { connectMongoAtlas } from "./src/config/databaseConnection.js";
+import connectMongoAtlas from "./src/config/databaseConnection.js";
 import { setupCronJobs } from "./src/cron.js";
 import { initializeRoutes } from "./src/routes/index.js";
 import { loggerMiddleware } from "./src/middlewares/loggerMiddleware.js";
