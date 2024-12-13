@@ -1,11 +1,12 @@
+import dotenv from "dotenv";
+dotenv.config();
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { User } from "../models/schema/userSchema.js";
 
 // User Registration
 export const register = async (req, res) => {
-  const data = req.body;
-  console.log("Registering", data);
+  console.log("Registering", req.body);
   try {
     const { name, email, password, role, contactNumber } = req.body;
 
@@ -14,35 +15,33 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Check if user already exists
-    let existingUser = await User.findOne({ contactNumber });
-    console.log(existingUser, "existingUser");
+    // Check if user already exists by contact number
+    const existingUser = await User.findOne({ contactNumber });
     if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+      return res
+        .status(409)
+        .json({ message: "User with this contact number already exists" });
     }
 
     // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    console.log(hashedPassword, "hashed password");
+
     // Create new user
     const newUser = new User({
       name,
       email,
       password: hashedPassword,
-      role: role || "resident", // Default role as "user"
+      role: role || "resident", // Default role as "resident"
       contactNumber,
     });
 
     await newUser.save();
+    console.log("JWT_SECRET:", process.env.JWT_SECRET);
 
     // Generate JWT token
     const token = jwt.sign(
-      {
-        userId: newUser._id,
-        email: newUser.email,
-        role: newUser.role,
-      },
+      { userId: newUser._id, email: newUser.email, role: newUser.role },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
@@ -58,7 +57,18 @@ export const register = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    // Handle duplicate key error
+    if (error.code === 11000) {
+      const duplicateField = Object.keys(error.keyValue)[0]; // Identify the duplicate field (e.g., email)
+      const duplicateValue = error.keyValue[duplicateField]; // Identify the duplicate value
+      return res.status(409).json({
+        message: `The ${duplicateField} "${duplicateValue}" is already registered. Please use a different ${duplicateField}.`,
+      });
+    }
+
+    // General server error
+    console.error("Registration error:", error.message);
+    res.status(500).json({ message: "An internal server error occurred" });
   }
 };
 
