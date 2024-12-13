@@ -109,6 +109,7 @@ export const login = async (req, res) => {
     );
 
     res.json({
+      message: "successful",
       token,
       user: {
         id: user._id,
