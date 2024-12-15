@@ -6,6 +6,7 @@ import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import compression from "compression";
+import cookieParser from "cookie-parser";
 
 import connectMongoAtlas from "./src/config/databaseConnection.js";
 import { setupCronJobs } from "./src/cron.js";
@@ -18,20 +19,23 @@ const port = process.env.PORT || 3001;
 
 // Initialize Middlewares
 app.use(helmet());
-app.use(
-  rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // Limit each IP to 100 requests per window
-  })
-);
 app.use(compression());
+app.use(cookieParser());
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || "http://localhost:3000",
     methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization"],  
+    credentials:true
   })
 );
+// app.use(
+//   rateLimit({
+//     windowMs: 15 * 60 * 1000, // 15 minutes
+//     max: 100, // Limit each IP to 100 requests per window
+//   })
+// );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // app.use(loggerMiddleware);
@@ -42,6 +46,11 @@ connectMongoAtlas();
 // Initialize Routes
 initializeRoutes(app);
 
+
+app.options("*", cors({ 
+  origin: process.env.FRONTEND_URL || "http://localhost:3000", 
+  credentials: true 
+}));
 // Health Check Route
 // app.get("/health", (req, res) => {
 //   res.status(200).json({

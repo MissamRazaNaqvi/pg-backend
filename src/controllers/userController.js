@@ -6,22 +6,37 @@ import { User } from "../models/schema/userSchema.js";
 
 // User Registration
 export const register = async (req, res) => {
-  console.log("Registering", req.body);
+  console.log("Registering user:", req.body);
+
   try {
     const { name, email, password, role, contactNumber } = req.body;
 
-    // Validate input data
+    // Validate required fields
     if (!name || !email || !password || !contactNumber) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Check if user already exists by contact number
-    const existingUser = await User.findOne({ contactNumber });
-    if (existingUser) {
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
+
+    // Check for duplicate email
+    const existingEmail = await User.findOne({ email });
+    if (existingEmail) {
       return res
         .status(409)
-        .json({ message: "User with this contact number already exists" });
+        .json({ message: "This email is already registered. Please use a different email." });
     }
+
+    // Check for duplicate contact number
+    // const existingContact = await User.findOne({ contactNumber });
+    // if (existingContact) {
+    //   return res
+    //     .status(409)
+    //     .json({ message: "This contact number is already registered. Please use a different contact number." });
+    // }
 
     // Hash password
     const salt = await bcrypt.genSalt(10);
@@ -32,41 +47,45 @@ export const register = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      role: role || "resident", // Default role as "resident"
+      role: role || "resident", // Default role is "resident"
       contactNumber,
     });
 
+    // Save the user
     await newUser.save();
-    console.log("JWT_SECRET:", process.env.JWT_SECRET);
 
     // Generate JWT token
-    const token = jwt.sign(
-      { userId: newUser._id, email: newUser.email, role: newUser.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
-    );
+    // const token = jwt.sign(
+    //   { userId: newUser._id, email: newUser.email, role: newUser.role },
+    //   process.env.JWT_SECRET,
+    //   { expiresIn: "1d" }
+    // );
 
+    // Send response with user details and token
     res.status(201).json({
       message: "User registered successfully",
-      token,
-      user: {
-        id: newUser._id,
-        name: newUser.name,
-        email: newUser.email,
-        role: newUser.role,
-      },
+      // token,
+      // user: {
+      //   id: newUser._id,
+      //   name: newUser.name,
+      //   email: newUser.email,
+      //   role: newUser.role,
+      //   contactNumber: newUser.contactNumber,
+      //   profilePicture: newUser.profilePicture,
+      //   createdAt: newUser.createdAt,
+      // },
     });
   } catch (error) {
-    // Handle duplicate key error
+    // Handle duplicate key errors
     if (error.code === 11000) {
-      const duplicateField = Object.keys(error.keyValue)[0]; // Identify the duplicate field (e.g., email)
-      const duplicateValue = error.keyValue[duplicateField]; // Identify the duplicate value
+      const duplicateField = Object.keys(error.keyValue)[0];
+      const duplicateValue = error.keyValue[duplicateField];
       return res.status(409).json({
         message: `The ${duplicateField} "${duplicateValue}" is already registered. Please use a different ${duplicateField}.`,
       });
     }
 
-    // General server error
+    // Log server error and send generic response
     console.error("Registration error:", error.message);
     res.status(500).json({ message: "An internal server error occurred" });
   }
@@ -85,40 +104,44 @@ export const login = async (req, res) => {
         .json({ message: "Both email and password are required" });
     }
 
-    // Find user
+    // Find user by email
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Check password
+    // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
     // Generate JWT token
     const token = jwt.sign(
-      {
-        userId: user._id,
-        email: user.email,
-        role: user.role,
-      },
+      { userId: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
 
-    res.json({
-      message: "successful",
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
-    });
+    // Set token as an HTTP-only cookie
+    res
+      .cookie("authToken", token, {
+        httpOnly: true,
+        // secure: process.env.NODE_ENV === "production", // Ensures secure in production
+        sameSite: "strict",
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
+      })
+      .json({
+        message: "Login successful",
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+      });
   } catch (error) {
+    console.error("Login Error:", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };

@@ -10,7 +10,9 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
+      unique: true, // Ensure email is unique
       trim: true,
+      lowercase: true, // Normalize email to lowercase
     },
     password: {
       type: String,
@@ -24,6 +26,7 @@ const userSchema = new mongoose.Schema(
     contactNumber: {
       type: String,
       required: true,
+      unique: true, // Ensure contact number is unique
       trim: true,
     },
     profilePicture: {
@@ -33,7 +36,6 @@ const userSchema = new mongoose.Schema(
   { timestamps: true } // Automatically create createdAt and updatedAt fields
 );
 
-// Create the User model from the schema
 const User = mongoose.model("User", userSchema);
 
 export { User };
