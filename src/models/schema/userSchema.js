@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-// Define User Schema
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -11,18 +10,15 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      // validate: {
-      //   validator: (v) => /\S+@\S+\.\S+/.test(v),
-      //   message: "Invalid email format",
-      // },
-    },  
+      trim: true,
+    },
     password: {
       type: String,
       required: true,
     },
     role: {
       type: String,
-      enum: ["admin","pg_owner" ,"manager", "resident"], // Example roles
+      enum: ["admin", "pg_owner", "manager", "resident"], // Example roles
       default: "resident",
     },
     contactNumber: {
