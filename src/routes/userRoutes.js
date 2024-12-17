@@ -5,6 +5,7 @@ import {
   getProfile,
   updateProfile,
   changePassword,
+  verifyToken,
 } from "../controllers/userController.js"; // Import user controller methods
 
 const router = express.Router(); // Initialize router
@@ -15,5 +16,6 @@ router.post("/login", login); // Login user
 router.get("/profile", getProfile); // Get user profile
 router.put("/profile", updateProfile); // Update user profile
 router.put("/change-password", changePassword); // Change user password
+router.get("/verify-token", verifyToken); // Change user password
 
 export default router; // Export router to be used in the index.js

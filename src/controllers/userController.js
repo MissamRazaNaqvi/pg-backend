@@ -25,9 +25,10 @@ export const register = async (req, res) => {
     // Check for duplicate email
     const existingEmail = await User.findOne({ email });
     if (existingEmail) {
-      return res
-        .status(409)
-        .json({ message: "This email is already registered. Please use a different email." });
+      return res.status(409).json({
+        message:
+          "This email is already registered. Please use a different email.",
+      });
     }
 
     // Check for duplicate contact number
@@ -231,5 +232,26 @@ export const changePassword = async (req, res) => {
     res.json({ message: "Password updated successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export const verifyToken = async (req, res) => {
+  try {
+    const token = req.cookies.authToken; // Read token from HTTP-only cookie
+    if (!token) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    // Verify JWT token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.userId).select("-password");
+    // console.log(decoded, "token");
+    // console.log(user, "user");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ user });
+  } catch (error) {
+    res.status(401).json({ message: "Invalid or expired token" });
   }
 };
